@@ -89,6 +89,6 @@ int main(int argc, char**argv)
       fclose(fichier);
   }
   else
-    printf("impo ssible d'ouvrir le fichier\n");
+    printf("impossible d'ouvrir le fichier\n");
   return 0;
 }
