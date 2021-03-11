@@ -65,9 +65,14 @@ void save_mandel(struct mandel_pic new_mandel, char* file)
   }
   else {
     fprintf(fichier, "P6\n900 600\n255\n");
-    for (int l = 0; l < new_mandel.height; l++) {
-      for (int c = 0; c < new_mandel.width; c++) {
+    for (float l = 0; l < new_mandel.height; l++) {
+        double r = l;
+        r/=300.;
+      for (float c = 0; c < new_mandel.width; c++) {
+        double d = c;
+        d/=300.;
         for (int i = 0; i < 5001; i++) {
+          new_mandel.convrg[i] = convergence(d,r);
           color[0] = palette(new_mandel.convrg[i]).red;
           color[1] = palette(new_mandel.convrg[i]).blue;
           color[2] = palette(new_mandel.convrg[i]).green;
@@ -122,7 +127,7 @@ int main(int argc, char**argv)
         for (float column = -600.; column < 300.; column ++){
           float h = column;
           h/=300.;
-          int c = 100 * convergence(h, g);
+          int c = 5 * convergence(h, g);
           v = palette(c);
           char color[3] = {v.red, v.green, v.blue};
           fwrite(color, 1, 3, fichier);
