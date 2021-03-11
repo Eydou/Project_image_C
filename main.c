@@ -41,7 +41,9 @@ struct color palette(int c)
 }
 
 struct mandel_pic new_mandel(int width, int height, double Xmin, double Ymin, double scale)
-{   struct mandel_pic mandel;
+{   
+  struct mandel_pic mandel;
+    mandel.convrg = malloc(sizeof(int)*(width * height));
     mandel.width = width;
     mandel.height = height;
     mandel.Xmin = Xmin;
@@ -51,6 +53,31 @@ struct mandel_pic new_mandel(int width, int height, double Xmin, double Ymin, do
     mandel.Ymax = Ymin + (scale * 3.0 * height / width);
     mandel.pixwidth = scale * 3.0/width;
     return mandel;
+}
+
+void save_mandel(struct mandel_pic new_mandel, char* file)
+{
+    char color[3] = {0, 0, 0};
+
+  FILE * fichier = fopen(file, "w");
+  if (fichier == NULL) {
+    printf("Fichier non cree\n");
+  }
+  else {
+    fprintf(fichier, "P6\n900 600\n255\n");
+    for (int l = 0; l < new_mandel.height; l++) {
+      for (int c = 0; c < new_mandel.width; c++) {
+        for (int i = 0; i < 5001; i++) {
+          color[0] = palette(new_mandel.convrg[i]).red;
+          color[1] = palette(new_mandel.convrg[i]).blue;
+          color[2] = palette(new_mandel.convrg[i]).green;
+          fwrite(color, 1, 3, fichier);
+        }
+      }
+    }
+  }
+  fprintf(fichier, "\n");
+  fclose(fichier);
 }
 
 
@@ -76,7 +103,9 @@ int main(int argc, char**argv)
 {
   FILE*fichier = NULL;
   fichier = fopen("image.jpeg", "w+");
-
+  struct mandel_pic m;
+  new_mandel(900, 600, -2, 1, 1);
+  save_mandel(m, "image2.ppm");
   if (fichier != NULL){
       fputs("P6", fichier);
       fputs("\n", fichier);
@@ -87,7 +116,6 @@ int main(int argc, char**argv)
       fputs("255", fichier);
       fputs("\n", fichier);
       struct color v;
-      struct mandel_pic m;
       for (float line = 300. ; line > -300.; line --){
         float g = line;
         g/=300.;
