@@ -73,6 +73,7 @@ int main(int argc, char**argv)
       fputs("255", fichier);
       fputs("\n", fichier);
       struct color v;
+      struct mandel_pic m;
       for (float line = 300. ; line > -300.; line --){
         float g = line;
         g/=300.;
@@ -81,7 +82,8 @@ int main(int argc, char**argv)
           h/=300.;
           int c = 100 * convergence(h, g);
           v = palette(c);
-          fprintf(fichier, "%c %c %c\n", v.red, v.green, v.blue);
+          char color[3] = {v.red, v.green, v.blue};
+          fwrite(color, 1, 3, fichier);
         }
       }
       fclose(fichier);
