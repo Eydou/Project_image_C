@@ -40,6 +40,20 @@ struct color palette(int c)
   return color;
 }
 
+struct mandel_pic new_mandel(int width, int height, double Xmin, double Ymin, double scale)
+{   struct mandel_pic mandel;
+    mandel.width = width;
+    mandel.height = height;
+    mandel.Xmin = Xmin;
+    mandel.Ymin = Ymin;
+    mandel.scale = scale;
+    mandel.Xmax = Xmin + (scale * 3.0);
+    mandel.Ymax = Ymin + (scale * 3.0 * height / width);
+    mandel.pixwidth = scale * 3.0/width;
+    return mandel;
+}
+
+
 int convergence(float x, float y)
 {
   float complex u = x + y * I;

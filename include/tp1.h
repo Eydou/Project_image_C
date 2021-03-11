@@ -19,7 +19,9 @@ typedef struct mandel_pic
     int width;
     int height;
     double Xmin;
+    double Xmax;
     double Ymin;
+    double Ymax;
     double scale;
     double pixwidth;
     int *convrg;
