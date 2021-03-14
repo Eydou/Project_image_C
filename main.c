@@ -67,7 +67,7 @@ struct mandel_pic new_mandel(int width, int height, double Xmin, double Ymin, do
     mandel.Ymin = Ymin;
     mandel.scale = scale;
     mandel.Xmax = Xmin + (scale * 3.0);
-    mandel.Ymax = Ymin + (scale * 3.0 * height / width);
+    mandel.Ymax = Ymin - (scale * 3.0 * height / width);
     mandel.pixwidth = scale * 3.0/width;
     return mandel;
 }
@@ -75,20 +75,27 @@ struct mandel_pic new_mandel(int width, int height, double Xmin, double Ymin, do
 void save_mandel(struct mandel_pic new_mandel, char* file)
 {
   FILE * fichier = fopen(file, "w");
-  if (fichier == NULL) {
+  size_t inc = 0;
+
+  if (fichier == NULL)
     printf("Fichier non cree\n");
-  }
   else {
-    fprintf(fichier, "P6\n900 600\n255\n");
+    fprintf(fichier, "P6\n%d %d\n255\n",new_mandel.width, new_mandel.height);
     int nbre_pixel = (new_mandel.width) * (new_mandel.height);
     struct color a;
-    for (int i = 0; i < nbre_pixel; i++) {
-          a = palette(new_mandel.convrg[i]);
-          char color[3] = {a.red, a.green, a.blue};
-          fwrite(color, 1, 3, fichier);
+    for (float line = new_mandel.Ymin; line > new_mandel.Ymax; line -= 2. / new_mandel.height) {
+      for (float column = new_mandel.Xmin; column < new_mandel.Xmax; column += 2. / new_mandel.height){
+        new_mandel.convrg[inc] = 5 * convergence(column, line);
+        inc++;
+      }
     }
+      for (int i = 0; i < nbre_pixel; i++) {
+        a = palette(new_mandel.convrg[i]);
+        char color[3] = {a.red, a.green, a.blue};
+        fwrite(color, 1, 3, fichier);
+        }
+      }
     fclose(fichier);
-  }
 }
 
 
@@ -98,7 +105,7 @@ int main(int argc, char**argv)
   FILE*fichier = NULL;
   fichier = fopen("image.jpeg", "w+");
   struct mandel_pic m;
-  new_mandel(900, 600, -2, 1, 1);
+  m = new_mandel(900, 600, -0.755232, 0.121387, 0.01);
   save_mandel(m, "image2.ppm");
   if (fichier != NULL){
       fputs("P6", fichier);
