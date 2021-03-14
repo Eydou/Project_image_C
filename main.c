@@ -1,5 +1,22 @@
 #include "tp1.h"
 
+int convergence(float x, float y)
+{
+  float complex u = x + y * I;
+  float complex z = x + y *I;
+  int counter = 0;
+
+  while (counter < 86){
+    if (cabsf(u) < 2){
+      u = cpow(u,2) + z;
+      counter++;
+    }
+    else
+      return counter;
+  }
+  return 0;
+}
+
 struct color palette(int c)
 {
   struct color color;
@@ -57,51 +74,23 @@ struct mandel_pic new_mandel(int width, int height, double Xmin, double Ymin, do
 
 void save_mandel(struct mandel_pic new_mandel, char* file)
 {
-    char color[3] = {0, 0, 0};
-
   FILE * fichier = fopen(file, "w");
   if (fichier == NULL) {
     printf("Fichier non cree\n");
   }
   else {
     fprintf(fichier, "P6\n900 600\n255\n");
-    for (float l = 0; l < new_mandel.height; l++) {
-        double r = l;
-        r/=300.;
-      for (float c = 0; c < new_mandel.width; c++) {
-        double d = c;
-        d/=300.;
-        for (int i = 0; i < 5001; i++) {
-          new_mandel.convrg[i] = convergence(d,r);
-          color[0] = palette(new_mandel.convrg[i]).red;
-          color[1] = palette(new_mandel.convrg[i]).blue;
-          color[2] = palette(new_mandel.convrg[i]).green;
+    int nbre_pixel = (new_mandel.width) * (new_mandel.height);
+    struct color a;
+    for (int i = 0; i < nbre_pixel; i++) {
+          a = palette(new_mandel.convrg[i]);
+          char color[3] = {a.red, a.green, a.blue};
           fwrite(color, 1, 3, fichier);
-        }
-      }
     }
+    fclose(fichier);
   }
-  fprintf(fichier, "\n");
-  fclose(fichier);
 }
 
-
-int convergence(float x, float y)
-{
-  float complex u = x + y * I;
-  float complex z = x + y *I;
-  int counter = 0;
-
-  while (counter < 86){
-    if (cabsf(u) < 2){
-      u = cpow(u,2) + z;
-      counter++;
-    }
-    else
-      return counter;
-  }
-  return 0;
-}
 
 
 int main(int argc, char**argv)
