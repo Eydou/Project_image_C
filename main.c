@@ -60,7 +60,7 @@ struct color palette(int c)
 struct mandel_pic new_mandel(int width, int height, double Xmin, double Ymin, double scale)
 {   
   struct mandel_pic mandel;
-    mandel.convrg = malloc(sizeof(int)*(width * height));
+    mandel.convrg = malloc(sizeof(int)*(width * height) + 5000);
     mandel.width = width;
     mandel.height = height;
     mandel.Xmin = Xmin;
@@ -76,6 +76,7 @@ void save_mandel(struct mandel_pic new_mandel, char* file)
 {
   FILE * fichier = fopen(file, "w");
   size_t inc = 0;
+  size_t test = 0;
 
   if (fichier == NULL)
     printf("Fichier non cree\n");
@@ -83,8 +84,13 @@ void save_mandel(struct mandel_pic new_mandel, char* file)
     fprintf(fichier, "P6\n%d %d\n255\n",new_mandel.width, new_mandel.height);
     int nbre_pixel = (new_mandel.width) * (new_mandel.height);
     struct color a;
-    for (float line = new_mandel.Ymin; line > new_mandel.Ymax; line -= 2. / new_mandel.height) {
-      for (float column = new_mandel.Xmin; column < new_mandel.Xmax; column += 2. / new_mandel.height){
+    printf("Xmin %.2f Xmax %.2f\n", new_mandel.Xmin, new_mandel.Xmax);
+    printf("Ymin %.2f Ymax %.2f\n", new_mandel.Ymin, new_mandel.Ymax);
+    for (float line = new_mandel.Ymin; line > new_mandel.Ymax; line -= 2. * (double)new_mandel.scale / (double)new_mandel.height) {
+      if (test == new_mandel.height)
+        break;
+      test++;
+      for (float column = new_mandel.Xmin; column < new_mandel.Xmax; column += 3. * (double)new_mandel.scale / (double)new_mandel.width){
         new_mandel.convrg[inc] = 5 * convergence(column, line);
         inc++;
       }
@@ -105,7 +111,7 @@ int main(int argc, char**argv)
   FILE*fichier = NULL;
   fichier = fopen("image.jpeg", "w+");
   struct mandel_pic m;
-  m = new_mandel(900, 600, -0.755232, 0.121387, 0.01);
+  m = new_mandel(900, 600, -2, 1, 1);
   save_mandel(m, "image2.ppm");
   if (fichier != NULL){
       fputs("P6", fichier);
