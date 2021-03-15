@@ -76,22 +76,25 @@ void save_mandel(struct mandel_pic new_mandel, char* file)
 {
   FILE * fichier = fopen(file, "w");
   size_t inc = 0;
-  size_t test = 0;
-
+  size_t k = 0;
+  size_t j;
   if (fichier == NULL)
     printf("Fichier non cree\n");
   else {
     fprintf(fichier, "P6\n%d %d\n255\n",new_mandel.width, new_mandel.height);
     int nbre_pixel = (new_mandel.width) * (new_mandel.height);
     struct color a;
-    printf("Xmin %.2f Xmax %.2f\n", new_mandel.Xmin, new_mandel.Xmax);
-    printf("Ymin %.2f Ymax %.2f\n", new_mandel.Ymin, new_mandel.Ymax);
-    for (float line = new_mandel.Ymin; line > new_mandel.Ymax; line -= 2. * (double)new_mandel.scale / (double)new_mandel.height) {
-      if (test == new_mandel.height)
+
+    for (double line = new_mandel.Ymin; line > new_mandel.Ymax; line -= 2. * (double)new_mandel.scale / (double)new_mandel.height) {
+      j = 0;
+      if (k == new_mandel.height)
         break;
-      test++;
-      for (float column = new_mandel.Xmin; column < new_mandel.Xmax; column += 3. * (double)new_mandel.scale / (double)new_mandel.width){
+      k++;
+      for (double column = new_mandel.Xmin; column < new_mandel.Xmax; column += 3 * (double)new_mandel.scale / (double)new_mandel.width){
         new_mandel.convrg[inc] = 5 * convergence(column, line);
+        if (j == new_mandel.width)
+          break;
+        j++;
         inc++;
       }
     }
@@ -111,7 +114,7 @@ int main(int argc, char**argv)
   FILE*fichier = NULL;
   fichier = fopen("image.jpeg", "w+");
   struct mandel_pic m;
-  m = new_mandel(900, 600, -2, 1, 1);
+  m = new_mandel(900, 600, -0.755232, 0.121387, 0.01);
   save_mandel(m, "image2.ppm");
   if (fichier != NULL){
       fputs("P6", fichier);
