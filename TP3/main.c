@@ -42,9 +42,15 @@ void draw_line(struct picture pic, int x1, int y1, int x2, int y2, struct color 
 
 void sierpinski(struct picture pic, double x, double y, double taille, struct color couleur)
 {
-  draw_line(pic, x, y, taille/2 - 1, y - taille*sqrt(3)/2, couleur);
-  draw_line(pic, x, y, taille-1, y, couleur);
-  draw_line(pic, taille - 1, y, taille/2 - 1, y - taille*sqrt(3)/2, couleur);
+  double b=-taille*sqrt(3.0)/2;
+  if (taille > 2){
+  draw_line(pic, x, y, x + taille/2 - 1, y + b, couleur);
+  draw_line(pic, x, y, x + taille-1, y, couleur);
+  draw_line(pic, x + taille - 1, y, x + taille/2 - 1, y + b, couleur);
+  sierpinski(pic, x, y, taille/2, couleur);
+  sierpinski(pic, x + taille/2, y, taille/2, couleur);
+  sierpinski(pic, x + taille/4, y + b/2, taille/2, couleur);
+  }
 }
 
 int main(int argc, char**argv)
