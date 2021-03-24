@@ -42,21 +42,21 @@ void draw_line(struct picture pic, int x1, int y1, int x2, int y2, struct color 
 
 void sierpinski(struct picture pic, double x, double y, double taille, struct color couleur)
 {
-  draw_line(pic, x, y, taille/2, y - taille*sqrt(3)/2, couleur);
+  draw_line(pic, x, y, taille/2 - 1, y - taille*sqrt(3)/2, couleur);
   draw_line(pic, x, y, taille-1, y, couleur);
-  draw_line(pic, taille/2, y-sqrt(3)/2, taille-1, y, couleur);
+  draw_line(pic, taille - 1, y, taille/2 - 1, y - taille*sqrt(3)/2, couleur);
 }
 
 int main(int argc, char**argv)
 {
-    struct picture m = new_pic(350,400);
+    struct picture m = new_pic(400,350);
     struct color rouge = {255, 0, 0};
     struct color bleu = {0, 0, 255};
     struct color magenta = {255, 0, 255};
     struct color vert = {0, 255, 0};
     struct color blanc = {255, 255, 255};
-    for (int i = 0; i < m.height; i++){
-      for (int j = 0; j < m.width; j++){
+    for (int i = 0; i < m.width; i++){
+      for (int j = 0; j < m.height; j++){
           set_pixel(m, i, j, blanc);
      }
     }
